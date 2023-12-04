@@ -105,6 +105,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ inputs.NODE_VERSION }}
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Cache NPM dependencies
         uses: actions/cache@v1
         with:
@@ -112,11 +114,8 @@ jobs:
           key: ${{ runner.OS }}-npm-cache-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.OS }}-npm-cache-
-      - name: Cache Cocoapods dependencies
-        run: |
-          cd ${{ inputs.SERVICE_LOCATION }}
-          npm install
-          with: 
+      - name: Install dependencies
+        run: npm install
       - name: Cache CocoaPods
         id: cache
         uses: actions/cache@v2
@@ -129,7 +128,6 @@ jobs:
           cd ${{ inputs.SERVICE_LOCATION }}/${{ inputs.IOS_SERVICE_LOCATION }}
           pod install
           pod install 
-
       - name: Deploy iOS Beta to TestFlight
         run: |
           cd ${{ inputs.SERVICE_LOCATION }}/${{ inputs.IOS_SERVICE_LOCATION }}
