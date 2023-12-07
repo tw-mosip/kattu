@@ -1,0 +1,39 @@
+fileignoreconfig:
+- filename: .github/workflows/ios-build.yml
+  checksum: 4df795ee5ca3ac37b3d9dd4fee6c33be29e2b62c435da35917c70d57320df4b8
+- filename: .github/workflows/ios-publish.yml
+  checksum: 983d6e3db4ed1f0a715fa591b486eb01ceabac9975e1b9493a1eba799fe5541f
+- filename: .github/helm-lint-configs/chart-schema.yaml
+  checksum: 3c408b173ede7278727a4de9da95a12d0e5496236105384112ef29dbf9c2d64d
+- filename: .github/workflows/npm-sonar-analysis.yml
+  checksum: 13517bfd17a09eb66c5310cdebbf1d43f2cac18a27b64c36f647d8f75baa031d
+- filename: .github/workflows/android-build.yml
+  checksum: d495399608478e2250b28b5491e0ffb6ed3826b6ecea3c8eca721d68dbbc9b08
+- filename: docs/gradlew-sonar-analysis-readme.md
+  checksum: 58d0eadea673282a55c2c879fe70b78752313a48589577b815bb2192425650c5
+- filename: docs/maven-build-readme.md
+  checksum: c6cc85db96ca76a9755865e7144316885be77dd0214d09ccf505a385bdae7bf0
+- filename: .github/workflows/android-publish.yml
+  checksum: 7024b61de44008defc64187b25e1e9c2d07b4881e86a172e2ce1798c84608c0a
+- filename: docs/maven-publish-to-nexus-readme.md
+  checksum: 4ebe1b1a023dff11af1b1a4c56667cd7c04045c76ed16527053ba957a37a054d
+- filename: .github/workflows/db-test.yml
+  checksum: eac77fdf7e2d5e37cc1de8fcada0668d8d8f441d2395af82bbf7420d0ae6c527
+- filename: docs/maven-sonar-analysis-readme.md
+  checksum: 8eeb1b4fec6f98e73b688e886789278f4b51b4426010e9d52a547e2837e2d744
+- filename: docs/npm-build-readme.md
+  checksum: 986f78a02f6952ed2b6f861e258f3044cecfc10b38e9818ea5e299f55f83fb84
+- filename: .github/workflows/gradlew-sonar-analysis.yml
+  checksum: 4e4e425830d989be6e9743f4d61b474fe8cae2bdaf8bbfe3ce4f25cfc5c274ab
+- filename: .github/workflows/image-transfer.yml
+  checksum: 184db418bf2ab612eb24042f8dfd48ef1bf12b0020fc5921a357f657b3c0d96e
+- filename: .github/workflows/maven-publish-to-nexus.yml
+  checksum: 588edfda4fd6fca4f52290a6456bff2f3d68499535160f9f2004363b2dd3447d
+- filename: docs/npm-sonar-analysis-readme.md
+  checksum: c2ee7c0c98895afb8d87e82f98412aaf301124d54c558bce78faa79230b08f2c
+- filename: .github/workflows/maven-sonar-analysis.yml
+  checksum: bf81e5e8bd22ffe9ecaec583b95bf985de59a8c90f242d3d8a5f4bfd60dcaf26
+- filename: .github/workflows/maven-build.yml
+  checksum: 6652509bf6b096f84f4a7178272c8072ebf27664c37f782d32b6b54f42aaadfb
+version: ""
+version: ""

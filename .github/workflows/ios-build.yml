@@ -28,22 +28,21 @@ jobs:
     runs-on: macos-13
 
     steps:
-      - uses: actions/checkout@v3.1.0
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ inputs.NODE_VERSION }}
-
-      - name: Install npm dependencies
-        run: |
-          cd ${{ inputs.SERVICE_LOCATION }}
-          npm install
-
-      - name: Install Pod # Doing pod install twice to make sure dependency is downloaded properly
+          cache: 'npm'
+      - run: npm install
+      - uses: actions/cache@v3
+        with:
+          path: Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+          restore-keys: ${{ runner.os }}-pods-
+      - name: Install Pods
         run: |
           cd ${{ inputs.SERVICE_LOCATION }}/${{ inputs.IOS_SERVICE_LOCATION }}
           pod install
-          pod install
-
       - name: Build iOS
         run: |
           cd ${{ inputs.SERVICE_LOCATION }}/${{ inputs.IOS_SERVICE_LOCATION }}
