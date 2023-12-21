@@ -26,13 +26,19 @@ on:
         required: false
         type: string
         default: ""
-
+      RELEASE_KEYSTORE_ALIAS:
+        default: androidreleasekey
+        type: string
     secrets:
       SONAR_TOKEN:
         required: true
       SONAR_ORGANIZATION:
         required: true
       SLACK_WEBHOOK_URL:
+        required: true
+      ANDROID_KEYSTORE_FILE:
+        required: true
+      RELEASE_KEYSTORE_PASSWORD:
         required: true
 
 env:
@@ -73,17 +79,27 @@ jobs:
             exit 1;
           fi
 
+      - name: Generate keystore
+        run: |
+          echo "$ANDROID_KEYSTORE_FILE" > release.keystore.b64
+          base64 -d -i release.keystore.b64 > android/app/release.keystore
+        env:
+          ANDROID_KEYSTORE_FILE: ${{ secrets.ANDROID_KEYSTORE_FILE }}
+
       - name: Analysis with Sonarcloud
         run: |
           cd ${{ inputs.SERVICE_LOCATION }}/${{ inputs.ANDROID_LOCATION }}
           sed -i -e 's/\r$//' ./gradlew
           chmod +x ./gradlew
           ./gradlew build sonarqube -Dsonar.organization=${{ env.SONAR_ORGANIZATION }} -Dsonar.projectKey=${{ inputs.PROJECT_KEY }} -Dsonar.projectName=${{ inputs.PROJECT_NAME }} -Dsonar.host.url=${{ inputs.SONAR_URL }} --info --warning-mode all ${{ inputs.SONAR_ARGS }}
-
-      - uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          fields: repo,message,author,commit,workflow,job # selectable (default: repo,message)
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
-        if: failure() # Pick up events even if the job fails or is canceled.
+          RELEASE_KEYSTORE_ALIAS: ${{ inputs.RELEASE_KEYSTORE_ALIAS }}
+          RELEASE_KEYSTORE_PASSWORD: "${{secrets.RELEASE_KEYSTORE_PASSWORD}}"
+
+      # - uses: 8398a7/action-slack@v3
+      #   with:
+      #     status: ${{ job.status }}
+      #     fields: repo,message,author,commit,workflow,job # selectable (default: repo,message)
+      #   env:
+      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
+      #   if: failure() # Pick up events even if the job fails or is canceled.
