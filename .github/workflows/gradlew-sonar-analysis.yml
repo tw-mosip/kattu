@@ -112,6 +112,14 @@ jobs:
         env:
           ANDROID_KEYSTORE_FILE: ${{ secrets.ANDROID_KEYSTORE_FILE }}
 
+      - name: free disk space
+        run: |
+          sudo swapoff -a
+          sudo rm -f /swapfile
+          sudo apt clean
+          docker rmi $(docker image ls -aq)
+          df -h
+
       - name: Analysis with Sonarcloud
         run: |
           echo "Starting Analysis with Sonarcloud" && df -h
