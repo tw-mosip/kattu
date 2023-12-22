@@ -56,10 +56,12 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+        run: echo "Checkout Repository" && df -h 
 
       - uses: actions/setup-node@v3.7.0
         with:
           node-version: '16'
+        run: echo "Before installing dependencies" && df -h 
 
       - name: NPM Install Dependencies
         run: cd ${{ inputs.SERVICE_LOCATION }} && npm install
@@ -78,20 +80,24 @@ jobs:
             echo "\$SONAR_URL environmental variable not set; EXITING;";
             exit 1;
           fi
+          echo "After installing dependencies" && df -h
 
       - name: Generate keystore
         run: |
           echo "$ANDROID_KEYSTORE_FILE" > release.keystore.b64
           base64 -d -i release.keystore.b64 > android/app/release.keystore
+          echo "After Generate keystore" && df -h 
         env:
           ANDROID_KEYSTORE_FILE: ${{ secrets.ANDROID_KEYSTORE_FILE }}
 
       - name: Analysis with Sonarcloud
         run: |
+          echo "Starting Analysis with Sonarcloud" && df -h
           cd ${{ inputs.SERVICE_LOCATION }}/${{ inputs.ANDROID_LOCATION }}
           sed -i -e 's/\r$//' ./gradlew
           chmod +x ./gradlew
           ./gradlew build sonarqube -Dsonar.organization=${{ env.SONAR_ORGANIZATION }} -Dsonar.projectKey=${{ inputs.PROJECT_KEY }} -Dsonar.projectName=${{ inputs.PROJECT_NAME }} -Dsonar.host.url=${{ inputs.SONAR_URL }} --info --warning-mode all ${{ inputs.SONAR_ARGS }}
+          echo "Starting Analysis with Sonarcloud" && df -h
         env:
           RELEASE_KEYSTORE_ALIAS: ${{ inputs.RELEASE_KEYSTORE_ALIAS }}
           RELEASE_KEYSTORE_PASSWORD: "${{secrets.RELEASE_KEYSTORE_PASSWORD}}"
