@@ -59,6 +59,18 @@ jobs:
 
     - name: run sonar analysis
       run: |
+        if [[ -z $SONAR_TOKEN ]]; then
+          echo "\$SONAR_TOKEN environmental variable not set; EXITING;";
+          exit 1;
+        fi
+        if [[ -z $SONAR_ORGANIZATION ]]; then
+          echo "\$SONAR_ORGANIZATION environmental variable not set; EXITING;";
+          exit 1;
+        fi
+        if [[ -z $SONAR_URL ]]; then
+          echo "\$SONAR_URL environmental variable not set; EXITING;";
+          exit 1;
+        fi
         cd "./${{inputs.SERVICE_LOCATION}}"
         echo "sonar.host.url=${{ inputs.SONAR_URL }}
               sonar.login=${{ secrets.SONAR_TOKEN }}
@@ -74,6 +86,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
+        SONAR_URL: ${{ inputs.SONAR_URL }}
 
     # - uses: 8398a7/action-slack@v3
     #   with:
