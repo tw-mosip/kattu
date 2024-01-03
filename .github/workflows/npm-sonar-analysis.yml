@@ -17,7 +17,7 @@ on:
     secrets:
       SONAR_TOKEN:
         required: true
-      ORG_KEY:
+      SONAR_ORGANIZATION:
         required: true
       SLACK_WEBHOOK_URL:
         required: true
@@ -71,7 +71,7 @@ jobs:
         echo "sonar.host.url=${{ inputs.SONAR_URL }}
               sonar.login=${{ secrets.SONAR_TOKEN }}
               sonar.projectKey=${{ inputs.PROJECT_KEY }}
-              sonar.organization=${{ secrets.ORG_KEY }}
+              sonar.organization=${{ secrets.SONAR_ORGANIZATION }}
               sonar.sourceEncoding=UTF-8
               sonar.sources=src
               sonar.exclusions=**/node_modules/**
