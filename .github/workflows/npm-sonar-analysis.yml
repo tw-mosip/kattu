@@ -48,14 +48,6 @@ jobs:
     - name: npm install
       run: cd ${{ inputs.SERVICE_LOCATION }} && npm install
 
-    - name: free disk space
-      run: |
-        sudo swapoff -a
-        sudo rm -f /swapfile
-        sudo apt clean
-        docker rmi $(docker image ls -aq)
-        df -h
-
     - name: npm build
       run: cd ${{ inputs.SERVICE_LOCATION }} && npm run-script build -- --prod --base-href . --output-path=dist
 
