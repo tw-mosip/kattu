@@ -49,7 +49,7 @@ jobs:
       run: cd ${{ inputs.SERVICE_LOCATION }} && npm install
 
     - name: npm build
-      run: cd ${{ inputs.SERVICE_LOCATION }} && npm run-script build -- --prod --base-href . --output-path=dist
+      run: cd ${{ inputs.SERVICE_LOCATION }} && npm run-script build
 
     - name: Setup branch and env
       run: |
