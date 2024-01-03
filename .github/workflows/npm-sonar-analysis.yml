@@ -21,7 +21,9 @@ on:
         required: true
       SLACK_WEBHOOK_URL:
         required: true
-
+env:
+  SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
+  
 jobs:
   npm-sonar-analysis:
     runs-on: ubuntu-latest
@@ -82,7 +84,7 @@ jobs:
               sonar.tests=src
               sonar.test.inclusions=**/*.spec.ts
               sonar.typescript.lcov.reportPaths=coverage/lcov.info" >> sonar-project.properties
-        npm install sonar-scanner && npm run sonar
+        npm install sonar-scanner && npx sonar-scanner -Dsonar.organization=${{ env.SONAR_ORGANIZATION }} -Dsonar.projectKey=${{ inputs.PROJECT_KEY }} -Dsonar.projectName=${{ inputs.PROJECT_KEY }} -Dsonar.host.url=${{ inputs.SONAR_URL }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
