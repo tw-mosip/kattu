@@ -79,10 +79,7 @@ jobs:
               sonar.projectKey=${{ inputs.PROJECT_KEY }}
               sonar.organization=${{ secrets.SONAR_ORGANIZATION }}
               sonar.sourceEncoding=UTF-8
-              sonar.sources=src
-              sonar.exclusions=**/node_modules/**
-              sonar.tests=src
-              sonar.test.inclusions=**/*.spec.ts
+              sonar.exclusions=**/node_modules/**, **/*.java
               sonar.typescript.lcov.reportPaths=coverage/lcov.info" >> sonar-project.properties
         npm install sonar-scanner && npx sonar-scanner -Dsonar.organization=${{ env.SONAR_ORGANIZATION }} -Dsonar.projectKey=${{ inputs.PROJECT_KEY }} -Dsonar.projectName=${{ inputs.PROJECT_KEY }} -Dsonar.host.url=${{ inputs.SONAR_URL }}
       env:
