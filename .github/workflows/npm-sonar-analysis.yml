@@ -81,7 +81,8 @@ jobs:
               sonar.sourceEncoding=UTF-8
               sonar.exclusions=.github/**, .vscode/**, android/**, assets/**, build/**, ios/**,**/node_modules/**, scripts/**, **/*.java
               sonar.typescript.lcov.reportPaths=coverage/lcov.info" >> sonar-project.properties
-        npm install sonar-scanner && npx sonar-scanner -Dsonar.organization=${{ env.SONAR_ORGANIZATION }} -Dsonar.projectKey=${{ inputs.PROJECT_KEY }} -Dsonar.projectName=${{ inputs.PROJECT_KEY }} -Dsonar.host.url=${{ inputs.SONAR_URL }}
+        cat sonar-project.properties
+        npx sonar-scanner -Dsonar.projectName=${{ inputs.PROJECT_KEY }} 
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
