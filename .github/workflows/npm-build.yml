@@ -9,6 +9,12 @@ on:
       SERVICE_LOCATION:
         required: true
         type: string
+      BUILD_SCRIPT:
+        required: true
+        type: string
+      OUTPUT_PATH:
+        required: true
+        type: string
     secrets:
       SLACK_WEBHOOK_URL:
         required: true
@@ -35,11 +41,11 @@ jobs:
       run: cd ${{ inputs.SERVICE_LOCATION }} && npm install
 
     - name: NPM Build
-      run: cd ${{ inputs.SERVICE_LOCATION }} && npm run-script build -- --prod --base-href . --output-path=dist
+      run: cd ${{ inputs.SERVICE_LOCATION }} && ${{ inputs.BUILD_SCRIPT}}
 
     - name: Zip Build Application
       if: ${{ !contains(github.ref, 'master') || !contains(github.ref, 'main') }}
-      run: cd ${{ inputs.SERVICE_LOCATION }} && zip -r ${{ inputs.BUILD_ARTIFACT }}.zip dist
+      run: cd ${{ inputs.SERVICE_LOCATION }} && zip -r ${{ inputs.BUILD_ARTIFACT }}.zip ${{inputs.OUTPUT_PATH}}
 
     - name: Upload the npm zip file
       if: ${{ !contains(github.ref, 'master') || !contains(github.ref, 'main') }}
@@ -48,10 +54,10 @@ jobs:
         name: ${{ inputs.BUILD_ARTIFACT }}
         path: ${{ inputs.SERVICE_LOCATION }}/${{ inputs.BUILD_ARTIFACT }}.zip
 
-    - uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        fields: repo,message,author,commit,workflow,job # selectable (default: repo,message)
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
-      if: failure() # Pick up events even if the job fails or is canceled.
+    # - uses: 8398a7/action-slack@v3
+    #   with:
+    #     status: ${{ job.status }}
+    #     fields: repo,message,author,commit,workflow,job # selectable (default: repo,message)
+    #   env:
+    #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
+    #   if: failure() # Pick up events even if the job fails or is canceled.

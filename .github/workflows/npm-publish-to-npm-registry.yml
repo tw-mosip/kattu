@@ -70,24 +70,24 @@ jobs:
       - name: Verify the build application
         run: cd ${{ inputs.SERVICE_LOCATION }} && npm run verify
 
-      - name: Publish package
-        run: cd ${{ inputs.SERVICE_LOCATION }} && npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+      # - name: Publish package
+      #   run: cd ${{ inputs.SERVICE_LOCATION }} && npm publish --access public
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
-      - name: Tag
-        run: |
-          pwd
-          cd ${{ inputs.SERVICE_LOCATION }}
-          VERSION=$(grep -o '"version": "[^"]*' package.json | sed 's/"version": "//') #Replace with the versioning strategy you prefer
-          VERSION="v${VERSION}_npm"
-          git tag $VERSION
-          git push origin $VERSION
+      # - name: Tag
+      #   run: |
+      #     pwd
+      #     cd ${{ inputs.SERVICE_LOCATION }}
+      #     VERSION=$(grep -o '"version": "[^"]*' package.json | sed 's/"version": "//') #Replace with the versioning strategy you prefer
+      #     VERSION="v${VERSION}_npm"
+      #     git tag $VERSION
+      #     git push origin $VERSION
 
-      - uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          fields: repo,message,author,commit,workflow,job # selectable (default: repo,message)
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
-        if: failure() # Pick up events even if the job fails or is canceled.
+      # - uses: 8398a7/action-slack@v3
+      #   with:
+      #     status: ${{ job.status }}
+      #     fields: repo,message,author,commit,workflow,job # selectable (default: repo,message)
+      #   env:
+      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
+      #   if: failure() # Pick up events even if the job fails or is canceled.
