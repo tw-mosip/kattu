@@ -74,15 +74,16 @@ jobs:
           exit 1;
         fi
         cd "./${{inputs.SERVICE_LOCATION}}"
-        echo "sonar.host.url=${{ inputs.SONAR_URL }}
-              sonar.login=${{ secrets.SONAR_TOKEN }}
-              sonar.projectKey=${{ inputs.PROJECT_KEY }}
-              sonar.organization=${{ secrets.SONAR_ORGANIZATION }}
-              sonar.sourceEncoding=UTF-8
-              sonar.exclusions=.github/**, .vscode/**, android/**, assets/**, build/**, ios/**,**/node_modules/**, scripts/**, **/*.java
-              sonar.typescript.lcov.reportPaths=coverage/lcov.info" >> sonar-project.properties
+        echo "
+          sonar.host.url=${{ inputs.SONAR_URL }}
+          sonar.login=${{ secrets.SONAR_TOKEN }}
+          sonar.projectKey=${{ inputs.PROJECT_KEY }}
+          sonar.projectName=${{ inputs.PROJECT_KEY }}
+          sonar.organization=${{ secrets.SONAR_ORGANIZATION }}
+          sonar.sourceEncoding=UTF-8
+          sonar.typescript.lcov.reportPaths=coverage/lcov.info" >> sonar-project.properties
         cat sonar-project.properties
-        npx sonar-scanner -Dsonar.projectName=${{ inputs.PROJECT_KEY }} 
+        npx sonar-scanner
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
