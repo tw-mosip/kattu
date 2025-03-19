@@ -67,13 +67,28 @@ jobs:
         run: |
           cd ${{ inputs.SERVICE_LOCATION }}
           swift test --enable-code-coverage
-          xcrun llvm-profdata merge -sparse .build/debug/codecov/default.profdata -o .build/debug/codecov/profdata.profdata
-          xcrun llvm-cov export -instr-profile=.build/debug/codecov/profdata.profdata -format="lcov" .build/debug/*PackageTests.xctest/Contents/MacOS/*PackageTests > coverage.xml
 
-          if [ ! -f coverage.xml ]; then
+          # Merge coverage data
+          xcrun llvm-profdata merge -sparse .build/debug/codecov/default.profdata -o .build/debug/codecov/profdata.profdata
+
+          # Export coverage data in LCOV format
+          xcrun llvm-cov export -instr-profile=.build/debug/codecov/profdata.profdata -format=lcov .build/debug/*PackageTests.xctest/Contents/MacOS/*PackageTests > coverage.lcov
+
+          # Convert LCOV to XML if necessary
+          genhtml -o coverage-html coverage.lcov
+          lcov --list coverage.lcov
+
+          # Move coverage file to expected location
+          mv coverage.lcov .build/debug/codecov/coverage.xml
+
+          # Check if coverage file exists
+          if [ ! -f .build/debug/codecov/coverage.xml ]; then
             echo "Error: coverage.xml not generated!"
             exit 1
           fi
+
+          echo "Coverage file generated successfully!"
+          cat .build/debug/codecov/coverage.xml | head -n 20  # Print first 20 lines for debugging
 
       - name: Run Sonar Analysis
         env:
@@ -90,7 +105,7 @@ jobs:
             -Dsonar.language=swift \
             -Dsonar.swift.file.suffixes=.swift \
             -Dsonar.host.url=${{ inputs.SONAR_URL }} \
-            -Dsonar.swift.coverage.reportPaths=coverage.xml \
+            -Dsonar.swift.coverage.reportPaths=.build/debug/codecov/coverage.xml \
             -Dsonar.sourceEncoding=UTF-8
       
       # - uses: 8398a7/action-slack@v3
