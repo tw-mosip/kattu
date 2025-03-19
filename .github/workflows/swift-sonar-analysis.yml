@@ -70,6 +70,11 @@ jobs:
           xcrun llvm-profdata merge -sparse .build/debug/codecov/default.profdata -o .build/debug/codecov/profdata.profdata
           xcrun llvm-cov export -instr-profile=.build/debug/codecov/profdata.profdata -format="lcov" .build/debug/*PackageTests.xctest/Contents/MacOS/*PackageTests > coverage.xml
 
+          if [ ! -f coverage.xml ]; then
+            echo "Error: coverage.xml not generated!"
+            exit 1
+          fi
+
       - name: Run Sonar Analysis
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -81,16 +86,17 @@ jobs:
             -Dsonar.projectName=${{ inputs.PROJECT_NAME }} \
             -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }} \
             -Dsonar.sources=Sources \
-            -Dsonar.language=swift
-            -Dsonar.swift.file.suffixes=.swift
+            -Dsonar.tests=Tests \ 
+            -Dsonar.language=swift \
+            -Dsonar.swift.file.suffixes=.swift \
             -Dsonar.host.url=${{ inputs.SONAR_URL }} \
             -Dsonar.swift.coverage.reportPaths=coverage.xml \
             -Dsonar.sourceEncoding=UTF-8
       
-      - uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          fields: repo,message,author,commit,workflow,job # selectable (default: repo,message)
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
-        if: "${{ github.event_name != 'pull_request' && failure() }}" # Pick up events even if the job fails or is canceled.
+      # - uses: 8398a7/action-slack@v3
+      #   with:
+      #     status: ${{ job.status }}
+      #     fields: repo,message,author,commit,workflow,job # selectable (default: repo,message)
+      #   env:
+      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
+      #   if: "${{ github.event_name != 'pull_request' && failure() }}" # Pick up events even if the job fails or is canceled.
