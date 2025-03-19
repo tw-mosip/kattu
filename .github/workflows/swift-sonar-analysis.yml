@@ -74,10 +74,6 @@ jobs:
           # Export coverage data in LCOV format
           xcrun llvm-cov export -instr-profile=.build/debug/codecov/profdata.profdata -format=lcov .build/debug/*PackageTests.xctest/Contents/MacOS/*PackageTests > coverage.lcov
 
-          # Convert LCOV to XML if necessary
-          genhtml -o coverage-html coverage.lcov
-          lcov --list coverage.lcov
-
           # Move coverage file to expected location
           mv coverage.lcov .build/debug/codecov/coverage.xml
 
