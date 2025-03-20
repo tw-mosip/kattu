@@ -86,6 +86,9 @@ jobs:
           echo "Coverage file generated successfully!"
           cat coverage.xml | head -n 20  # Print first 20 lines for debugging
 
+          ls -la coverage.xml
+          echo "Current directory: $(pwd)"
+
       - name: Run Sonar Analysis
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -101,7 +104,7 @@ jobs:
             -Dsonar.language=swift \
             -Dsonar.swift.file.suffixes=.swift \
             -Dsonar.host.url=${{ inputs.SONAR_URL }} \
-            -Dsonar.swift.coverage.reportPaths=coverage.xml \
+            -Dsonar.coverage.jacoco.xmlReportPaths=coverage.xml \
             -Dsonar.sourceEncoding=UTF-8
       
       # - uses: 8398a7/action-slack@v3
