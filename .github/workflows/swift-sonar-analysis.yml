@@ -104,7 +104,7 @@ jobs:
             -Dsonar.language=swift \
             -Dsonar.swift.file.suffixes=.swift \
             -Dsonar.host.url=${{ inputs.SONAR_URL }} \
-            -Dsonar.coverage.jacoco.xmlReportPaths=coverage.xml \
+            -Dsonar.coverageReportPaths=coverage.xml \
             -Dsonar.sourceEncoding=UTF-8
       
       # - uses: 8398a7/action-slack@v3
