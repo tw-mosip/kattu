@@ -74,8 +74,8 @@ jobs:
           # Export coverage data in LCOV format
           xcrun llvm-cov export -instr-profile=.build/debug/codecov/profdata.profdata -format=lcov .build/debug/*PackageTests.xctest/Contents/MacOS/*PackageTests > coverage.lcov
 
-          pip install lcov_cobertura
-          lcov_cobertura coverage.lcov --output coverage.xml
+          pip install lcov_cobertura==1.6
+          lcov_cobertura coverage.lcov --output coverage.xml --version 1.0
 
           # Check if coverage file exists
           if [ ! -f coverage.xml ]; then
