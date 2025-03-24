@@ -79,27 +79,10 @@ jobs:
           echo "Merging coverage data..."
           xcrun llvm-profdata merge -sparse .build/debug/codecov/default.profdata -o .build/debug/codecov/profdata.profdata
 
-          echo "Exporting coverage data in LCOV format..."
-          xcrun llvm-cov export -instr-profile=.build/debug/codecov/profdata.profdata -format=lcov .build/debug/*PackageTests.xctest/Contents/MacOS/*PackageTests > coverage.lcov
+          xcrun --run llvm-cov show -instr-profile=.build/debug/codecov/profdata.profdata .build/debug/*PackageTests.xctest/Contents/MacOS/*PackageTests > coverage.report
 
-          echo "Installing lcov_cobertura..."
-          pip install --upgrade lcov_cobertura==1.6
-
-          echo "Converting LCOV to Cobertura XML..."
-          lcov_cobertura coverage.lcov --output coverage.xml --version 1.0
-
-          # Verify coverage file was successfully generated
-          if [ ! -f coverage.xml ]; then
-            echo "Error: coverage.xml not generated!"
-            exit 1
-          fi
-
-          echo "Coverage file generated successfully!"
-          echo "First 20 lines of coverage.xml for debugging:"
-          head -n 20 coverage.xml
-
-          echo "Listing coverage.xml details:"
-          ls -la coverage.xml
+          echo "Listing coverage.report details:"
+          ls -la coverage.report
 
           echo "Current directory: $(pwd)"
 
@@ -120,7 +103,7 @@ jobs:
             -Dsonar.language=swift \
             -Dsonar.swift.file.suffixes=.swift \
             -Dsonar.host.url=${{ inputs.SONAR_URL }} \
-            -Dsonar.coverageReportPaths=${{ inputs.SERVICE_LOCATION }}/coverage.xml \
+            -Dsonar.swift.coverage.reportPaths=${{ inputs.SERVICE_LOCATION }}/coverage.report \
             -Dsonar.sourceEncoding=UTF-8
 
       # - uses: 8398a7/action-slack@v3
