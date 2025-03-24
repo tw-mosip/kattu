@@ -67,7 +67,6 @@ jobs:
         run: |
           cd ${{ inputs.SERVICE_LOCATION }}
 
-          echo "Running Swift tests with code coverage..."
           swift test --enable-code-coverage
 
           # Verify coverage data exists before merging
@@ -76,15 +75,11 @@ jobs:
             exit 1
           fi
 
-          echo "Merging coverage data..."
+          # Merging coverage data
           xcrun llvm-profdata merge -sparse .build/debug/codecov/default.profdata -o .build/debug/codecov/profdata.profdata
 
+          # Generating coverage report
           xcrun --run llvm-cov show -instr-profile=.build/debug/codecov/profdata.profdata .build/debug/*PackageTests.xctest/Contents/MacOS/*PackageTests > coverage.report
-
-          echo "Listing coverage.report details:"
-          ls -la coverage.report
-
-          echo "Current directory: $(pwd)"
 
       - name: Run Sonar Analysis
         env:
@@ -106,10 +101,10 @@ jobs:
             -Dsonar.swift.coverage.reportPaths=${{ inputs.SERVICE_LOCATION }}/coverage.report \
             -Dsonar.sourceEncoding=UTF-8
 
-      # - uses: 8398a7/action-slack@v3
-      #   with:
-      #     status: ${{ job.status }}
-      #     fields: repo,message,author,commit,workflow,job # selectable (default: repo,message)
-      #   env:
-      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
-      #   if: "${{ github.event_name != 'pull_request' && failure() }}" # Pick up events even if the job fails or is canceled.
+      - uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,author,commit,workflow,job # selectable (default: repo,message)
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
+        if: "${{ github.event_name != 'pull_request' && failure() }}" # Pick up events even if the job fails or is canceled.
