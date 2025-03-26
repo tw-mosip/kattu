@@ -88,9 +88,13 @@ jobs:
 
               if [ "${{ inputs.TARGET_PLATFORM }}" == "iOS" ]; then
                   # iOS-specific testing
+
+                  DEVICE_ID=$(xcrun simctl list devices available | grep -m1 'iPhone' | awk -F '[()]' '{print $2}')
+                  echo "Using iOS Simulator ID: $DEVICE_ID"
+                  
                   xcrun xcodebuild test \
                     -scheme "${{ inputs.XC_SCHEME }}" \
-                    -destination 'platform=iOS Simulator,OS=latest' \
+                    -destination 'platform=iOS Simulator,id=$DEVICE_ID' \
                     -enableCodeCoverage YES \
                     -derivedDataPath ./DerivedData
 
