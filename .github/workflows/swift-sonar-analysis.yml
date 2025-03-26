@@ -91,6 +91,11 @@ jobs:
 
                   DEVICE_ID=$(xcrun simctl list devices available | grep -m1 'iPhone' | awk -F '[()]' '{print $2}')
                   echo "Using iOS Simulator ID: $DEVICE_ID"
+
+                  xcrun simctl boot "$DEVICE_ID" || echo "Simulator already booted"
+                  xcrun simctl list devices
+                  
+                  sleep 50
                   
                   xcrun xcodebuild test \
                     -scheme "${{ inputs.XC_SCHEME }}" \
