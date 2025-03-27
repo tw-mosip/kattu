@@ -87,7 +87,7 @@ jobs:
                   rm -rf ./DerivedData
                    
                   # Build the package
-                  xcodebuild -scheme pixelpass -destination 'generic/platform=iOS' build
+                  xcodebuild -scheme "${{ inputs.TEST_SCHEME }}" -destination 'generic/platform=iOS' build
                   
                   xcodebuild test \
                     -scheme "${{ inputs.TEST_SCHEME }}" \
