@@ -6,11 +6,6 @@ on:
         description: "Swift package location"
         required: true
         type: string
-      TEST_PLATFORM:
-        description: "Test platform for the swift package"
-        required: false
-        type: string
-        default: "macOS"
       TEST_SCHEME:
         description: "Test scheme for the swift package"
         required: false
@@ -85,18 +80,6 @@ jobs:
 
             # Check if Tests directory exists and is not empty
             if [ -d "Tests" ] && [ "$(ls -A Tests)" ]; then
-
-              if [ "${{ inputs.TEST_PLATFORM }}" == "iOS" ]; then
-                  # iOS-specific testing
-
-                  DEVICE_ID=$(xcrun simctl list devices available | grep -i 'iPhone 15 Pro' | awk -F '[()]' '{print $2}' | head -n1)
-                  echo "Using iOS Simulator ID: $DEVICE_ID"
-
-                  xcrun simctl boot "$DEVICE_ID" || echo "Simulator already booted"
-                  
-                  echo "Simulator $DEVICE_ID booted waiting for it to be ready..."
-                  sleep 50
-                  
                   xcrun xcodebuild test \
                     -scheme "${{ inputs.TEST_SCHEME }}" \
                     -destination 'platform=iOS Simulator,OS=latest,name=iPhone 16' \
@@ -130,24 +113,6 @@ jobs:
                     -instr-profile="$COVERAGE_PATH" \
                     "$TEST_EXECUTABLE" \
                     -format=text > coverage.report
-
-              elif [ "${{ inputs.TEST_PLATFORM }}" == "macOS" ]; then
-                  # macOS testing
-                  swift test --enable-code-coverage
-
-                  # Verify coverage data exists before merging
-                  if [ ! -f .build/debug/codecov/default.profdata ]; then
-                    echo "Error: Coverage data file (.profdata) not found!"
-                    exit 1
-                  fi
-
-                  # Merging coverage data
-                  xcrun llvm-profdata merge -sparse .build/debug/codecov/default.profdata -o .build/debug/codecov/profdata.profdata
-
-                  # Generating coverage report
-                  xcrun --run llvm-cov show -instr-profile=.build/debug/codecov/profdata.profdata .build/debug/*PackageTests.xctest/Contents/MacOS/*PackageTests > coverage.report
-              fi
-
             else
               echo "No tests found. Creating empty coverage report for SonarQube."
               touch coverage.report
