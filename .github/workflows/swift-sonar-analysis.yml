@@ -6,13 +6,13 @@ on:
         description: "Swift package location"
         required: true
         type: string
-      TARGET_PLATFORM:
-        description: "Target platform for the swift package"
+      TEST_PLATFORM:
+        description: "Test platform for the swift package"
         required: false
         type: string
         default: "macOS"
-      XC_SCHEME:
-        description: "Xcode scheme for the swift test package"
+      TEST_SCHEME:
+        description: "Test scheme for the swift package"
         required: false
         type: string
         default: ""
@@ -86,20 +86,21 @@ jobs:
             # Check if Tests directory exists and is not empty
             if [ -d "Tests" ] && [ "$(ls -A Tests)" ]; then
 
-              if [ "${{ inputs.TARGET_PLATFORM }}" == "iOS" ]; then
+              if [ "${{ inputs.TEST_PLATFORM }}" == "iOS" ]; then
                   # iOS-specific testing
 
-                  DEVICE_ID=$(xcrun simctl list devices available | grep -m1 'iPhone' | awk -F '[()]' '{print $2}')
+                  DEVICE_ID=$(xcrun simctl list devices available | grep -i 'iPhone 15 Pro' | awk -F '[()]' '{print $2}' | head -n1)
                   echo "Using iOS Simulator ID: $DEVICE_ID"
 
                   xcrun simctl boot "$DEVICE_ID" || echo "Simulator already booted"
-                  xcrun simctl list devices
                   
+                  echo "Simulator $DEVICE_ID booted waiting for it to be ready..."
                   sleep 50
                   
                   xcrun xcodebuild test \
-                    -scheme "${{ inputs.XC_SCHEME }}" \
+                    -scheme "${{ inputs.TEST_SCHEME }}" \
                     -destination 'platform=iOS Simulator,id=$DEVICE_ID' \
+                    -sdk iphonesimulator \
                     -enableCodeCoverage YES \
                     -derivedDataPath ./DerivedData
 
@@ -130,7 +131,7 @@ jobs:
                     "$TEST_EXECUTABLE" \
                     -format=text > coverage.report
 
-              elif [ "${{ inputs.TARGET_PLATFORM }}" == "macOS" ]; then
+              elif [ "${{ inputs.TEST_PLATFORM }}" == "macOS" ]; then
                   # macOS testing
                   swift test --enable-code-coverage
 
