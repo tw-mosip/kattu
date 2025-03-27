@@ -99,7 +99,7 @@ jobs:
                   
                   xcrun xcodebuild test \
                     -scheme "${{ inputs.TEST_SCHEME }}" \
-                    -destination 'platform=iOS Simulator,id=$DEVICE_ID' \
+                    -destination 'platform=iOS Simulator,OS=latest,name=iPhone 16' \
                     -sdk iphonesimulator \
                     -enableCodeCoverage YES \
                     -derivedDataPath ./DerivedData
