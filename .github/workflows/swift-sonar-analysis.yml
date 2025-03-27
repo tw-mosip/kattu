@@ -10,7 +10,6 @@ on:
         description: "Test scheme of the swift package"
         required: true
         type: string
-        default: ""
       SONAR_URL:
         required: false
         type: string
