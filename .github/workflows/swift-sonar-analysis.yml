@@ -89,7 +89,7 @@ jobs:
                   # Build the package
                   xcodebuild -scheme pixelpass -destination 'generic/platform=iOS' build
                   
-                  xcrun xcodebuild test \
+                  xcodebuild test \
                     -scheme "${{ inputs.TEST_SCHEME }}" \
                     -destination 'platform=iOS Simulator,OS=latest,name=iPhone 15' \
                     -sdk iphonesimulator \
