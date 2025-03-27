@@ -7,8 +7,8 @@ on:
         required: true
         type: string
       TEST_SCHEME:
-        description: "Test scheme for the swift package"
-        required: false
+        description: "Test scheme of the swift package"
+        required: true
         type: string
         default: ""
       SONAR_URL:
