@@ -69,6 +69,10 @@ jobs:
 
       - name: Generate Code Coverage
         run: |
+
+            # setup xcode
+            sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+            
             cd ${{ inputs.SERVICE_LOCATION }}
 
             # Ensure Tests directory exists (to prevent SonarQube errors)
@@ -79,9 +83,15 @@ jobs:
 
             # Check if Tests directory exists and is not empty
             if [ -d "Tests" ] && [ "$(ls -A Tests)" ]; then
+
+                  rm -rf ./DerivedData
+                   
+                  # Build the package
+                  xcodebuild -scheme pixelpass -destination 'generic/platform=iOS' build
+                  
                   xcrun xcodebuild test \
                     -scheme "${{ inputs.TEST_SCHEME }}" \
-                    -destination 'platform=iOS Simulator,OS=latest,name=iPhone 16' \
+                    -destination 'platform=iOS Simulator,OS=latest,name=iPhone 15' \
                     -sdk iphonesimulator \
                     -enableCodeCoverage YES \
                     -derivedDataPath ./DerivedData
