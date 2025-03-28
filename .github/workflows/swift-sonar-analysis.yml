@@ -70,62 +70,37 @@ jobs:
       - name: Generate Code Coverage
         run: |
 
-            # setup xcode
-            sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
-            
-            cd ${{ inputs.SERVICE_LOCATION }}
+          cd ${{ inputs.SERVICE_LOCATION }}
 
-            # Ensure Tests directory exists (to prevent SonarQube errors)
-            if [ ! -d "Tests" ]; then
-              echo "Tests directory is missing. Creating an empty Tests directory."
-              mkdir Tests
-            fi
+          # Ensure Tests directory exists (to prevent SonarQube errors)
+          if [ ! -d "Tests" ]; then
+            echo "Tests directory is missing. Creating an empty Tests directory."
+            mkdir Tests
+          fi
 
-            # Check if Tests directory exists and is not empty
-            if [ -d "Tests" ] && [ "$(ls -A Tests)" ]; then
+          # Check if Tests directory exists and is not empty
+          if [ -d "Tests" ] && [ "$(ls -A Tests)" ]; then
+                
+              # Run tests
+              xcodebuild test \
+                  -scheme pixelpassTests \
+                  -destination 'platform=iOS Simulator,OS=latest,name=iPhone 15' \
+                  -enableCodeCoverage YES
 
-                  rm -rf ./DerivedData
-                   
-                  # Build the package
-                  xcodebuild -scheme "${{ inputs.TEST_SCHEME }}" -destination 'generic/platform=iOS' build
-                  
-                  xcodebuild test \
-                    -scheme "${{ inputs.TEST_SCHEME }}" \
-                    -destination 'platform=iOS Simulator,OS=latest,name=iPhone 15' \
-                    -sdk iphonesimulator \
-                    -enableCodeCoverage YES \
-                    -derivedDataPath ./DerivedData
+              # Find test bundle and executable
+              TEST_BUNDLE=$(find ~/Library/Developer/Xcode/DerivedData -type d -name "*.xctest" | head -n 1)
+              TEST_EXECUTABLE=$(find "$TEST_BUNDLE" -type f -perm -111 | head -n 1)
+              COVERAGE_PATH=$(find ~/Library/Developer/Xcode/DerivedData -name "Coverage.profdata" | head -n 1)
 
-                  TEST_BUNDLE=$(find ./DerivedData/Build/Products/Debug-iphonesimulator -type d -name "*.xctest" | head -n 1)
-
-                  if [ -z "$TEST_BUNDLE" ]; then
-                    echo "Error: Test bundle not found!"
-                    exit 1
-                  fi
-
-                  TEST_EXECUTABLE=$(find "$TEST_BUNDLE" -type f -perm -111 | head -n 1)
-
-                  if [ -z "$TEST_EXECUTABLE" ]; then
-                    echo "Error: Test executable not found!"
-                    exit 1
-                  fi
-
-                  COVERAGE_PATH=$(find ./DerivedData -name "Coverage.profdata" | head -n 1)
-
-                  if [ -z "$COVERAGE_PATH" ]; then
-                    echo "Error: Coverage data file not found!"
-                    exit 1
-                  fi
-
-                  # Generate coverage report for iOS
-                  xcrun llvm-cov show \
-                    -instr-profile="$COVERAGE_PATH" \
-                    "$TEST_EXECUTABLE" \
-                    -format=text > coverage.report
-            else
-              echo "No tests found. Creating empty coverage report for SonarQube."
-              touch coverage.report
-            fi
+              # Generate coverage report
+              xcrun llvm-cov show \
+                  -instr-profile="$COVERAGE_PATH" \
+                  "$TEST_EXECUTABLE" \
+                  -format=text > coverage.report       
+          else
+            echo "No tests found. Creating empty coverage report for SonarQube."
+            touch coverage.report
+          fi
 
       - name: Run Sonar Analysis
         env:
