@@ -88,6 +88,21 @@ jobs:
 
                 if [ -n "$TEST_EXECUTABLE" ] && [ -n "$COVERAGE_PATH" ]; then
                   # Generate coverage report in text format
+                  echo "---- Coverage Debug ----"
+
+                  echo "Executable:"
+                  echo "$TEST_EXECUTABLE"
+
+                  echo "Profile:"
+                  echo "$COVERAGE_PATH"
+
+                  echo "Coverage Summary:"
+                  xcrun llvm-cov report \
+                    "$TEST_EXECUTABLE" \
+                    -instr-profile="$COVERAGE_PATH"
+
+                  echo "------------------------"
+
                   xcrun llvm-cov show \
                       -instr-profile="$COVERAGE_PATH" \
                       "$TEST_EXECUTABLE" \
